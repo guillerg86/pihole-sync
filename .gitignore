@@ -1,0 +1,22 @@
+# Extensions
+*.db
+*.leases
+*.sha1
+*.domains
+*.bak
+
+# Explicit files
+docker-compose.yml
+etc-dnsmasq.d/01-pihole.conf
+etc-dnsmasq.d/06-rfc6761.conf
+etc-pihole/adlists.list
+etc-pihole/logrotate
+etc-pihole/dns-servers.conf
+etc-pihole/pihole-FTL.conf
+etc-pihole/local.list
+etc-pihole/versions
+
+# Folders
+migration_backup/
+var-log-pihole/
+
