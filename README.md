@@ -3,6 +3,25 @@ A gitops way to sync two or many PiHoles without having connection between them.
 
 [![](https://docs.driverlandia.com/uploads/images/gallery/2023-10/scaled-1680-/YzZcEwjAOPOvwIHo-image-1697823619387.png)](https://docs.driverlandia.com/uploads/images/gallery/2023-10/YzZcEwjAOPOvwIHo-image-1697823619387.png)
 
+## What is synchronized?
+
+This script synchronizes the following data
+
+- Configuration (web password, dns upstream)
+- Local DNS 
+  - DNS Records
+  - CName Records
+- Adlist
+- Allow list 
+- Block list
+
+**Does not sync:**
+
+- DHCP
+- Groups
+- Clients 
+
+
 ## How to install
 
 Follow steps: https://docs.driverlandia.com/books/pihole/page/sincronizacion-de-varios-pihole
