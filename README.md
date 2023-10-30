@@ -23,6 +23,10 @@ Commit this file to git repository (git commit & push), make a pull on the secon
 python3 gravity_sync.py -a import
 ```
 
+Execution result of git pull & import command on second PiHole
+
+[![](https://docs.driverlandia.com/uploads/images/gallery/2023-10/scaled-1680-/xZyFuURATx1sQGcK-image-1698661376076.png)](https://docs.driverlandia.com/uploads/images/gallery/2023-10/xZyFuURATx1sQGcK-image-1698661376076.png)
+
 ## Parameters
 
 |Name|Values|Default|Description|
