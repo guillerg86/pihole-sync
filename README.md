@@ -30,3 +30,9 @@ python3 gravity_sync.py -a import
 |-d||`etc-pihole/gravity.db`|Path and name of gravity database|
 |-f||`gravity_changes.json`|Path of file where write/read export/import changes|
 |-a|`import`<br>`export`|You need to specify|Action you want to perform|
+
+
+# Password for PiHole 
+
+If you use this setupvars.conf the password of PiHole web is `admin`. 
+**Please change this password!! DON'T USE IN PRODUCTION!**
