@@ -55,7 +55,29 @@ Execution result of git pull & import command on second PiHole
 |-a|`import`<br>`export`|You need to specify|Action you want to perform|
 
 
+## Automatization
+
+
+For export changes from master to git, you can add this line to cron 
+
+```
+*/15 * * * * cd /docker/pihole/ && python3 gravity_sync.py -a export && git add -A && git commit -m "Autoupdate" && git push 
+```
+
+For import to secondary PiHoles add this line in cron
+
+```
+*/15 * * * * cd /docker/pihole/ && git pull && python3 gravity_sync.py -a import
+```
+
 # Password for PiHole 
 
 If you use this setupvars.conf the password of PiHole web is `admin`. 
 **Please change this password!! DON'T USE IN PRODUCTION!**
+
+
+# Misc
+
+If this project has been useful to you, you can give me a coffee at [Paypal](https://paypal.me/guillerg86?country.x=ES&locale.x=es_ES)
+
+
