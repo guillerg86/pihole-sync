@@ -375,7 +375,7 @@ if __name__ == '__main__':
         main_import(args, changes_applied)
 
     if args.action == "import" and args.upgrade_gravity == "y" and changes_applied.adlist_added:
-        print("\n######################################\n# CLEANING STUFF \n######################################")
+        print("\n######################################\n# UPDATING GRAVITY \n######################################")
         execute_gravity_update(printShell=True)
 
 
