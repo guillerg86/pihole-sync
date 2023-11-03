@@ -10,10 +10,14 @@ class Changes(object):
         self.adlist_added = False
 
 def configure_parser():
+    """
+    Configure arguments of this script
+    :return:
+    """
     # Configure parser
     parser = argparse.ArgumentParser(
         prog="PiHole v5.x Gravity Syncer",
-        description="Export/Import database Adlist, Whitelist and Blocklist"
+        description="Export/Import database Adlist, Domainlist, Clients, Groups"
     )
     parser.add_argument('-d','--database', default="etc-pihole/gravity.db")
     parser.add_argument('-f','--file', default="gravity_changes.json")
@@ -24,7 +28,11 @@ def configure_parser():
     return args
 
 def execute_gravity_update(printShell=False):
-
+    """
+    Execute command to force docker pihole to upgrade gravity feeds
+    :param printShell:
+    :return:
+    """
     cmd = f"docker exec {args.container_name} pihole updateGravity"
     try:
         print(f"\tExecuting {cmd}")
@@ -50,10 +58,22 @@ def cursor_to_dict(cursor):
 ## IMPORT FUNCTIONS
 #####################################################################
 def load_changes_file(file):
+    """
+    Load json file
+    :param file:
+    :return: Json / Dict
+    """
     f = open(file)
     return json.load(f)
 
 def apply_clients(cursor,clients,groups_hash):
+    """
+    Apply changes to clients (new, update, delete) and create relationship with groups
+    :param cursor:
+    :param clients:
+    :param groups_hash:
+    :return:
+    """
     # Extracting clients we want preserve
     where = "','".join([ x["ip"] for x in clients ])
 
@@ -100,6 +120,14 @@ def apply_clients(cursor,clients,groups_hash):
                 print(f"\t\t\tDeleted {cursor.rowcount} unused groups")
 
 def apply_adlist(cursor,adlist,groups_hash,changes_applied):
+    """
+    Apply changes to adlist (new, update, delete) and then creates relationship with group
+    :param cursor:
+    :param adlist:
+    :param groups_hash:
+    :param changes_applied:
+    :return:
+    """
     # Extracting adlist we want preserve
     where = "','".join([ x["address"] for x in adlist ])
 
@@ -156,6 +184,13 @@ def apply_adlist(cursor,adlist,groups_hash,changes_applied):
                 print(f"\t\t\tDeleted {cursor.rowcount} unused groups")
 
 def apply_domainlist(cursor,domainlist,groups_hash):
+    """
+    This function apply updates to domainlist (new, update, delete), also creates relationship with groups
+    :param cursor:
+    :param domainlist:
+    :param groups_hash:
+    :return:
+    """
     # Extraemos las listas que si queremos guardar
     where = "','".join([ x["domain"] for x in domainlist ])
     # print(where)
@@ -271,6 +306,12 @@ def apply_changes(cursor, data,changes_applied):
 
 
 def main_import(arguments,changes_applied):
+    """
+    Main function for import data.
+    :param arguments:
+    :param changes_applied:
+    :return:
+    """
     data = load_changes_file(arguments.file)
     dbcon = sqlite3.connect(arguments.database)
     cursor = dbcon.cursor()
@@ -283,6 +324,11 @@ def main_import(arguments,changes_applied):
 ## EXPORT FUNCTIONS
 #####################################################################
 def get_adlist(dbconnection):
+    """
+    Get adlist from database, save as a dict and expand with groups name
+    :param dbconnection:
+    :return:
+    """
     cursor = dbconnection.cursor()
     data = query_to_dict(cursor, "SELECT id, address, enabled, comment FROM adlist ")
     for adlist in data:
@@ -294,7 +340,12 @@ def get_adlist(dbconnection):
     cursor.close()
     return data
 
-def get_allowblocklist(dbconnection):
+def get_domainlist(dbconnection):
+    """
+    Get domain list from database, save as a dict and expand with groups name
+    :param dbconnection:
+    :return:
+    """
     # Get rows of domainlist table
     cursor = dbconnection.cursor()
     data = query_to_dict( cursor, "SELECT id, domain, enabled, type, comment, date_added FROM domainlist")
@@ -311,6 +362,11 @@ def get_allowblocklist(dbconnection):
 
 
 def get_grouplist(dbconnection):
+    """
+    Get group list from database
+    :param dbconnection:
+    :return:
+    """
     # Get rows of grouplist table
     cursor = dbconnection.cursor()
     data = query_to_dict( cursor, "SELECT name, enabled, date_added, description FROM 'group'")
@@ -318,6 +374,11 @@ def get_grouplist(dbconnection):
     return data
 
 def get_clientlist(dbconnection):
+    """
+    Get client list from database, save as a dict and expand with the groups name
+    :param dbconnection:
+    :return:
+    """
     # Get rows of clientlist table
     cursor = dbconnection.cursor()
     data = query_to_dict( cursor, "SELECT id, ip, date_added, comment FROM 'client'")
@@ -332,9 +393,14 @@ def get_clientlist(dbconnection):
 
 
 def main_export(arguments):
+    """
+    Main function to get info about adlist, domainlist, grouplist, clientlist and create the changes.json file
+    :param arguments:
+    :return:
+    """
     dbcon = sqlite3.connect(args.database)
     adlist = get_adlist(dbcon)
-    domainlist = get_allowblocklist(dbcon)
+    domainlist = get_domainlist(dbcon)
     grouplist = get_grouplist(dbcon)
     clientlist = get_clientlist(dbcon)
 
@@ -345,7 +411,7 @@ def main_export(arguments):
         "clientlist": clientlist,
     }
     with open(arguments.file,"w") as of:
-        json.dump(data,of)
+        json.dump(data,of, indent=4)
 
     # Cerramos conexion
     dbcon.close()
@@ -362,7 +428,7 @@ if __name__ == '__main__':
     changes_applied = Changes()
 
     if not os.path.isfile(args.database):
-        print(f'El fichero {args.database} no existe o no es un fichero')
+        print(f'The file {args.database} does not exist (or not readable)')
         exit(-1)
 
     if args.action == "export":
