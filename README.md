@@ -11,15 +11,15 @@ This script synchronizes the following data
 - Local DNS 
   - DNS Records
   - CName Records
+- Groups
+- Clients 
 - Adlist
-- Allow list 
-- Block list
+- Domains List (Allow list & Block list)
+
 
 **Does not sync:**
 
 - DHCP
-- Groups
-- Clients 
 
 
 ## How to install
@@ -48,11 +48,13 @@ Execution result of git pull & import command on second PiHole
 
 ## Parameters
 
-|Name|Values|Default|Description|
-|-|-|-|-|
-|-d||`etc-pihole/gravity.db`|Path and name of gravity database|
-|-f||`gravity_changes.json`|Path of file where write/read export/import changes|
-|-a|`import`<br>`export`|You need to specify|Action you want to perform|
+|Arg|Long Argument|Values|Default|Description|
+|-|-|-|-|-|
+|`-d`|`--database`||`etc-pihole/gravity.db`|Path and name of gravity database|
+|`-f`|`--file`||`gravity_changes.json`|Path of file where write/read export/import changes|
+|`-a`|`--action`|`import`<br>`export`|You need to specify|Action you want to perform|
+|`-ug`|`--upgrade-gravity`|`y`</br>`n`|`n`|Execute force upgrade IOC after adding adlist|
+|`-cn`|`--container-name`||`pihole`|Container name of pihole|
 
 
 ## Automatization
@@ -69,6 +71,13 @@ For import to secondary PiHoles add this line in cron
 ```
 */15 * * * * cd /docker/pihole/ && git pull && python3 gravity_sync.py -a import
 ```
+
+Import and if there's a new adlist added, then force gravity update. Be careful, if you check many times at day some list they will ban you for a few days.
+
+```
+*/15 * * * * cd /docker/pihole/ && git pull && python3 gravity_sync.py -a import -ug yes
+```
+
 
 # Password for PiHole 
 
