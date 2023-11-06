@@ -69,13 +69,13 @@ For export changes from master to git, you can add this line to cron
 For import to secondary PiHoles add this line in cron. Command restartdns reload is for reload DNS if file of local DNS has been updated
 
 ```
-*/15 * * * * cd /docker/pihole/ && git pull && docker exec pihole pihole restartdns reload && python3 gravity_sync.py -a import
+*/15 * * * * cd /docker/pihole/ && git pull && docker exec -it pihole /bin/bash pihole restartdns reload && python3 gravity_sync.py -a import
 ```
 
 Import and if there's a new adlist added, then force gravity update. Be careful, if you check many times at day some list they will ban you for a few days.
 
 ```
-*/15 * * * * cd /docker/pihole/ && git pull && docker exec pihole pihole restartdns reload && python3 gravity_sync.py -a import -ug y
+*/15 * * * * cd /docker/pihole/ && git pull && docker exec -it pihole /bin/bash pihole restartdns reload && python3 gravity_sync.py -a import -ug y
 ```
 
 
